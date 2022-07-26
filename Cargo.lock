@@ -636,6 +636,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "jwt"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6204285f77fe7d9784db3fdc449ecce1a0114927a51d5a41c4c7a292011c015f"
+dependencies = [
+ "base64",
+ "crypto-common",
+ "digest",
+ "hmac",
+ "serde",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1424,11 +1439,14 @@ checksum = "42657b1a6f4d817cda8e7a0ace261fe0cc946cf3a80314390b22cc61ae080792"
 name = "timezone_db"
 version = "0.1.0"
 dependencies = [
+ "hmac",
+ "jwt",
  "lazy_static",
  "reqwest",
  "rocket",
  "serde",
  "serde_urlencoded",
+ "sha2",
  "thiserror",
  "tokio",
  "urlencoding",

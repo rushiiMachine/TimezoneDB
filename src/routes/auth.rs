@@ -1,9 +1,10 @@
 use rocket::fairing::AdHoc;
+use rocket::http::{Cookie, CookieJar, SameSite};
 use rocket::http::uri::{Reference, Uri};
 use rocket::response::Redirect;
+use rocket::time::{Duration, OffsetDateTime};
 
-use crate::constants;
-use crate::utils::discord;
+use crate::{constants, logic};
 
 #[get("/")]
 async fn redirect() -> Redirect {
@@ -14,21 +15,20 @@ async fn redirect() -> Redirect {
 }
 
 #[get("/?<code>")]
-async fn code(code: String) -> Redirect {
-    let oauth_data = discord::complete_oauth_flow(code)
-        .await
-        .map_err(|err| println!("{:?}", err))
-        .ok();
+async fn code(code: String, cookies: &CookieJar<'_>) -> Redirect {
+    match logic::auth::login_user(code).await {
+        Ok(jwt_token) => {
+            let cookie = Cookie::build("loginInfo", jwt_token)
+                .secure(true)
+                .http_only(true)
+                .same_site(SameSite::Strict)
+                .expires(OffsetDateTime::now_utc() + Duration::days(30))
+                .finish();
 
-    if let Some(oauth_data) = oauth_data {
-        let auth = format!("{0} {1}", oauth_data.token_type, oauth_data.access_token);
-        let user = discord::get_current_user(&auth)
-            .await
-            .map_err(|err| println!("{:?}", err))
-            .ok();
-
-        if let Some(user) = user {
-            println!("{:?}", user);
+            cookies.add(cookie);
+        }
+        Err(err) => {
+            println!("{:?}", err);
         }
     }
 

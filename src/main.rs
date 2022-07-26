@@ -11,6 +11,7 @@ use rocket::serde::json::Value;
 mod constants;
 mod routes;
 mod utils;
+mod logic;
 
 #[get("/")]
 async fn index() -> Value {

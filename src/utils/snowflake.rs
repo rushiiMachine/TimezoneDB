@@ -6,7 +6,7 @@ use serde::de::Visitor;
 
 pub type Snowflake = u64;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct ApiSnowflake(Snowflake);
 
 impl Deref for ApiSnowflake {

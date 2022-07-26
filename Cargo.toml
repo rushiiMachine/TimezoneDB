@@ -13,3 +13,7 @@ serde_urlencoded = "0.7"
 urlencoding = "2.1"
 lazy_static = "1.4"
 thiserror = "1.0"
+jwt = "0.16"
+hmac = "0.12"
+sha2 = "0.10"
+

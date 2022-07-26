@@ -1,7 +1,10 @@
 use std::env;
 use std::str::FromStr;
 
+use hmac::digest::KeyInit;
+use hmac::Hmac;
 use lazy_static::lazy_static;
+use sha2::Sha384;
 
 lazy_static! {
     pub static ref PORT: u16 = match env::var("PORT") {
@@ -25,6 +28,17 @@ lazy_static! {
             true => panic!("cannot run in production without HOST env var"),
             false => format!("http://localhost:{0}", *PORT),
         }
+    };
+
+    pub static ref JWT_KEY: Hmac<Sha384> = {
+        let secret = match env::var("JWT_SECRET") {
+            Ok(var) => var,
+            Err(_) => match *PROD {
+                true => panic!("cannot run in production without JWT_SECRET env var"),
+                false => "timezone_db".to_string(),
+            }
+        };
+        Hmac::new_from_slice(secret.as_bytes()).unwrap()
     };
 
     pub static ref DISCORD_ID: String = env::var("DISCORD_ID")
