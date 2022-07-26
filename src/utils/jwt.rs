@@ -1,4 +1,7 @@
 use jwt::{AlgorithmType, Header, SignWithKey, Token, VerifyWithKey};
+use rocket::http::Status;
+use rocket::Request;
+use rocket::request::{FromRequest, Outcome};
 use serde::{Deserialize, Serialize};
 
 use crate::constants;
@@ -9,6 +12,32 @@ pub struct JwtData {
     pub user_id: ApiSnowflake,
     pub avatar_hash: String,
     pub username: String,
+}
+
+#[derive(Debug)]
+pub enum JwtDataError {
+    Invalid,
+    Missing,
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for JwtData {
+    type Error = JwtDataError;
+
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
+        match request.cookies().get("loginInfo") {
+            Some(cookie) => {
+                match verify_token(cookie.value()) {
+                    Ok(data) =>
+                        Outcome::Success(data),
+                    Err(_) =>
+                        Outcome::Failure((Status::Unauthorized, JwtDataError::Invalid)),
+                }
+            }
+            None =>
+                Outcome::Failure((Status::Unauthorized, JwtDataError::Missing))
+        }
+    }
 }
 
 pub fn make_token(data: JwtData) -> String {
@@ -22,7 +51,7 @@ pub fn make_token(data: JwtData) -> String {
         .as_str().to_string()
 }
 
-pub fn verify_token(token_str: &String) -> Result<JwtData, Box<dyn std::error::Error>> {
+pub fn verify_token(token_str: &str) -> Result<JwtData, Box<dyn std::error::Error>> {
     let token: Token<Header, JwtData, _> = Token::parse_unverified(&token_str)?
         .verify_with_key(&*constants::JWT_KEY)?;
     Ok(token.claims().clone())

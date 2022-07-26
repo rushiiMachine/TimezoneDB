@@ -28,6 +28,7 @@ async fn code(code: String, cookies: &CookieJar<'_>) -> Redirect {
             cookies.add(cookie);
         }
         Err(err) => {
+            // TODO: redirect with error message
             println!("{:?}", err);
         }
     }
