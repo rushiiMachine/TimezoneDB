@@ -26,6 +26,7 @@ async fn index(user: Option<JwtData>) -> Value {
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
+        .attach(routes::catchers::setup())
         .attach(routes::user::routes())
         .attach(routes::auth::routes())
         .configure(Config {
