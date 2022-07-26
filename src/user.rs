@@ -1,9 +1,10 @@
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::Redirect;
-use rocket::serde::json::{Json, Value};
+use rocket::serde::json::Value;
 use rocket::serde::json::serde_json::json;
-use crate::Snowflake;
+
+use crate::snowflake::Snowflake;
 
 #[get("/<id>")]
 async fn get(id: Snowflake) -> Value {
