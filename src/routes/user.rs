@@ -1,10 +1,10 @@
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::Redirect;
-use rocket::serde::json::Value;
 use rocket::serde::json::serde_json::json;
+use rocket::serde::json::Value;
 
-use crate::snowflake::Snowflake;
+use crate::utils::snowflake::Snowflake;
 
 #[get("/<id>")]
 async fn get(id: Snowflake) -> Value {
@@ -22,7 +22,7 @@ async fn delete() -> Redirect {
 }
 
 pub fn routes() -> AdHoc {
-    AdHoc::on_ignite("user routes", |rocket| async {
+    AdHoc::on_ignite("User Routing", |rocket| async {
         rocket.mount("/api/user", routes![get, exists, delete])
     })
 }

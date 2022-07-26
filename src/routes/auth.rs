@@ -2,7 +2,8 @@ use rocket::fairing::AdHoc;
 use rocket::http::uri::{Reference, Uri};
 use rocket::response::Redirect;
 
-use crate::{constants, discord_api};
+use crate::constants;
+use crate::utils::discord;
 
 #[get("/")]
 async fn redirect() -> Redirect {
@@ -14,14 +15,14 @@ async fn redirect() -> Redirect {
 
 #[get("/?<code>")]
 async fn code(code: String) -> Redirect {
-    let oauth_data = discord_api::complete_oauth_flow(code)
+    let oauth_data = discord::complete_oauth_flow(code)
         .await
         .map_err(|err| println!("{:?}", err))
         .ok();
 
     if let Some(oauth_data) = oauth_data {
         let auth = format!("{0} {1}", oauth_data.token_type, oauth_data.access_token);
-        let user = discord_api::get_current_user(&auth)
+        let user = discord::get_current_user(&auth)
             .await
             .map_err(|err| println!("{:?}", err))
             .ok();
@@ -37,7 +38,7 @@ async fn code(code: String) -> Redirect {
 }
 
 pub fn routes() -> AdHoc {
-    AdHoc::on_ignite("auth routes", |rocket| async {
+    AdHoc::on_ignite("Auth Routing", |rocket| async {
         rocket.mount("/api/auth", routes![redirect, code])
     })
 }

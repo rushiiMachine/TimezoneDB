@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use crate::constants;
-use crate::snowflake::ApiSnowflake;
+use crate::utils::snowflake::ApiSnowflake;
 
 lazy_static! {
     static ref HTTP: Client = Client::new();

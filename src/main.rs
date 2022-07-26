@@ -8,11 +8,9 @@ use rocket::config::LogLevel;
 use rocket::serde::json::serde_json::json;
 use rocket::serde::json::Value;
 
-mod user;
-mod auth;
-mod discord_api;
-mod snowflake;
 mod constants;
+mod routes;
+mod utils;
 
 #[get("/")]
 async fn index() -> Value {
@@ -23,8 +21,8 @@ async fn index() -> Value {
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
-        .attach(user::routes())
-        .attach(auth::routes())
+        .attach(routes::user::routes())
+        .attach(routes::auth::routes())
         .configure(Config {
             address: IpAddr::V4(Ipv4Addr::UNSPECIFIED),
             port: *constants::PORT,
