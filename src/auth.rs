@@ -14,23 +14,20 @@ async fn redirect() -> Redirect {
 
 #[get("/?<code>")]
 async fn code(code: String) -> Redirect {
-    match discord_api::complete_oauth_flow(code).await {
-        Ok(data) => {
-            let authorization = format!("{0} {1}", data.token_type, data.access_token);
-            let user = discord_api::get_current_user(&authorization);
+    let oauth_data = discord_api::complete_oauth_flow(code)
+        .await
+        .map_err(|err| println!("{:?}", err))
+        .ok();
 
-            match user.await {
-                Ok(user) => {
+    if let Some(oauth_data) = oauth_data {
+        let auth = format!("{0} {1}", oauth_data.token_type, oauth_data.access_token);
+        let user = discord_api::get_current_user(&auth)
+            .await
+            .map_err(|err| println!("{:?}", err))
+            .ok();
 
-                }
-                Err(err) => {
-                    println!("{:?}", err)
-                }
-            }
-            println!("{:?}", data);
-        }
-        Err(err) => {
-            println!("{:?}", err)
+        if let Some(user) = user {
+            println!("{:?}", user);
         }
     }
 
