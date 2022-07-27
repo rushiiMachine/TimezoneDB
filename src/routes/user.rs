@@ -2,12 +2,13 @@ use either::{Either, Left, Right};
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::Redirect;
+use rocket::serde::json::{Json, Value};
 use rocket::serde::json::serde_json::json;
-use rocket::serde::json::Value;
 use rocket_db_pools::Connection;
 
 use crate::database::Db;
 use crate::logic;
+use crate::logic::user::UserUpdateData;
 use crate::utils::jwt::JwtData;
 use crate::utils::snowflake::Snowflake;
 
@@ -19,6 +20,16 @@ async fn get_current_user(user: JwtData) -> Redirect {
 #[delete("/")]
 async fn delete_user(user: JwtData, db: Connection<Db>) -> Status {
     let status = logic::user::delete_user(*user.user_id, db);
+
+    match status.await {
+        true => Status::Ok,
+        false => Status::InternalServerError,
+    }
+}
+
+#[put("/", data = "<data>", format = "application/json")]
+async fn update_user(user: JwtData, data: Json<UserUpdateData>, db: Connection<Db>) -> Status {
+    let status = logic::user::update_user(user, data.0, db);
 
     match status.await {
         true => Status::Ok,
@@ -60,10 +71,11 @@ pub fn routes() -> AdHoc {
         rocket.mount(
             "/api/user",
             routes![
-                get_user,
                 get_current_user,
-                exists_user,
                 delete_user,
+                update_user,
+                get_user,
+                exists_user,
             ],
         )
     })
