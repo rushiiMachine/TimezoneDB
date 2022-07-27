@@ -3,8 +3,10 @@ use rocket::http::{Cookie, CookieJar, SameSite};
 use rocket::http::uri::{Reference, Uri};
 use rocket::response::Redirect;
 use rocket::time::{Duration, OffsetDateTime};
+use rocket_db_pools::Connection;
 
 use crate::{constants, logic};
+use crate::database::Db;
 
 #[get("/")]
 async fn redirect() -> Redirect {
@@ -15,13 +17,13 @@ async fn redirect() -> Redirect {
 }
 
 #[get("/?<code>")]
-async fn code(code: String, cookies: &CookieJar<'_>) -> Redirect {
-    match logic::auth::login_user(code).await {
+async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Redirect {
+    match logic::auth::login_user(code, db).await {
         Ok(jwt_token) => {
             let cookie = Cookie::build("loginInfo", jwt_token)
                 .secure(true)
                 .http_only(true)
-                .same_site(SameSite::Strict)
+                .same_site(SameSite::Lax)
                 .expires(OffsetDateTime::now_utc() + Duration::days(30))
                 .finish();
 
@@ -38,8 +40,21 @@ async fn code(code: String, cookies: &CookieJar<'_>) -> Redirect {
     Redirect::to(host)
 }
 
+#[get("/logout")]
+async fn logout(cookies: &CookieJar<'_>) -> Redirect {
+    cookies.remove(Cookie::named("loginInfo"));
+    Redirect::to(uri!(crate::index))
+}
+
 pub fn routes() -> AdHoc {
     AdHoc::on_ignite("Auth Routing", |rocket| async {
-        rocket.mount("/api/auth", routes![redirect, code])
+        rocket.mount(
+            "/api/auth",
+            routes![
+                redirect,
+                code,
+                logout,
+            ],
+        )
     })
 }

@@ -4,7 +4,7 @@ use std::ops::Deref;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::Visitor;
 
-pub type Snowflake = u64;
+pub type Snowflake = i64;
 
 #[derive(Debug, Copy, Clone)]
 pub struct ApiSnowflake(Snowflake);
@@ -39,7 +39,7 @@ impl<'de> Visitor<'de> for ApiSnowflakeVisitor {
         where
             E: de::Error,
     {
-        let i: u64 = value.parse().map_err(|_| de::Error::invalid_type(de::Unexpected::Str(value), &self))?;
+        let i: i64 = value.parse().map_err(|_| de::Error::invalid_type(de::Unexpected::Str(value), &self))?;
         Ok(ApiSnowflake(i))
     }
 }

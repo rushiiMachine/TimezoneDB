@@ -1,10 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
-use std::net::{IpAddr, Ipv4Addr};
-
 use rocket::Config;
-use rocket::config::LogLevel;
 use rocket::serde::json::Value;
 use rocket::serde::json::serde_json::json;
 
@@ -14,9 +11,10 @@ mod constants;
 mod routes;
 mod utils;
 mod logic;
+mod database;
 
 #[get("/")]
-async fn index(user: Option<JwtData>) -> Value {
+pub async fn index(user: Option<JwtData>) -> Value {
     // TODO: templated dashboard
 
     json!({"status": "online", "logged_in": user.is_some() })
@@ -24,16 +22,14 @@ async fn index(user: Option<JwtData>) -> Value {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build()
+    let figment = Config::figment()
+        .merge(("port", *constants::PORT))
+        .merge(("databases.main.url", "./database.db"));
+
+    rocket::custom(figment)
         .mount("/", routes![index])
+        .attach(database::setup())
         .attach(routes::catchers::setup())
         .attach(routes::user::routes())
         .attach(routes::auth::routes())
-        .configure(Config {
-            address: IpAddr::V4(Ipv4Addr::UNSPECIFIED),
-            port: *constants::PORT,
-            log_level: LogLevel::Normal,
-            cli_colors: true,
-            ..Config::default()
-        })
 }

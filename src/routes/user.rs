@@ -1,36 +1,56 @@
+use either::{Either, Left, Right};
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::Redirect;
 use rocket::serde::json::serde_json::json;
 use rocket::serde::json::Value;
+use rocket_db_pools::Connection;
 
+use crate::database::Db;
+use crate::logic;
 use crate::utils::jwt::JwtData;
 use crate::utils::snowflake::Snowflake;
-
-#[get("/<id>")]
-async fn get_user(id: Snowflake) -> Value {
-    // TODO: fetch user from db and calculate offset
-
-    json!({"userId": id, "timezone": "-7"})
-}
 
 #[get("/")]
 async fn get_current_user(user: JwtData) -> Redirect {
     Redirect::to(user.user_id.to_string())
 }
 
-#[get("/<id>/exists")]
-async fn exists_user(id: Snowflake) -> Status {
-    // TODO: check db if user exists
+#[delete("/")]
+async fn delete_user(user: JwtData, db: Connection<Db>) -> Status {
+    let status = logic::user::delete_user(*user.user_id, db);
 
-    Status::Ok // or 404 if not found
+    match status.await {
+        true => Status::Ok,
+        false => Status::InternalServerError,
+    }
 }
 
-#[delete("/")]
-async fn delete_user(user: JwtData) -> Status {
-    // TODO: delete record from db
+#[get("/<id>")]
+async fn get_user(id: Snowflake, db: Connection<Db>) -> Either<Status, Value> {
+    let user = logic::user::fetch_user(id, db);
 
-    Status::Ok
+    match user.await {
+        None => Left(Status::NotFound),
+        Some(user) => {
+            let data = json!({
+                "userId": id,
+                "timezone": user.offset, // calculate offset if timezone != null
+                "timezoneId": user.timezone,
+            });
+            Right(data)
+        }
+    }
+}
+
+#[get("/<id>/exists")]
+async fn exists_user(id: Snowflake, db: Connection<Db>) -> Status {
+    let exists = logic::user::exists_user(id, db);
+
+    match exists.await {
+        true => Status::Ok,
+        false => Status::NotFound,
+    }
 }
 
 pub fn routes() -> AdHoc {
@@ -41,7 +61,7 @@ pub fn routes() -> AdHoc {
                 get_user,
                 get_current_user,
                 exists_user,
-                delete_user
+                delete_user,
             ],
         )
     })
