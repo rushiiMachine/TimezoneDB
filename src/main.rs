@@ -14,10 +14,8 @@ mod logic;
 mod database;
 
 #[get("/")]
-pub async fn index(user: Option<JwtData>) -> Value {
-    // TODO: templated dashboard
-
-    json!({"status": "online", "logged_in": user.is_some() })
+pub async fn index(_user: Option<JwtData>) -> Value {
+    json!({})
 }
 
 #[launch]
@@ -29,7 +27,5 @@ fn rocket() -> _ {
     rocket::custom(figment)
         .mount("/", routes![index])
         .attach(database::setup())
-        .attach(routes::catchers::setup())
-        .attach(routes::user::routes())
-        .attach(routes::auth::routes())
+        .attach(routes::setup())
 }
