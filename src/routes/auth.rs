@@ -16,6 +16,11 @@ async fn redirect() -> Redirect {
     Redirect::to(uri)
 }
 
+#[get("/?error=access_denied")]
+async fn auth_denied() -> Redirect {
+    Redirect::to(uri!(crate::index))
+}
+
 #[get("/?<code>")]
 async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Redirect {
     match logic::auth::login_user(code, db).await {
@@ -52,6 +57,7 @@ pub fn routes() -> AdHoc {
             "/api/auth",
             routes![
                 redirect,
+                auth_denied,
                 code,
                 logout,
             ],
