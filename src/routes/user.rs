@@ -18,8 +18,8 @@ async fn get_current_user(user: JwtData) -> Redirect {
 }
 
 #[delete("/")]
-async fn delete_user(user: JwtData, db: Connection<Db>) -> Status {
-    let status = logic::user::delete_user(*user.user_id, db);
+async fn delete_user(user: JwtData, mut db: Connection<Db>) -> Status {
+    let status = logic::user::delete_user(*user.user_id, &mut *db);
 
     match status.await {
         true => Status::Ok,
@@ -28,18 +28,19 @@ async fn delete_user(user: JwtData, db: Connection<Db>) -> Status {
 }
 
 #[put("/", data = "<data>", format = "application/json")]
-async fn update_user(user: JwtData, data: Json<UserUpdateData>, db: Connection<Db>) -> Status {
-    let status = logic::user::update_user(user, data.0, db);
+async fn update_user(user: JwtData, data: Json<UserUpdateData>, mut db: Connection<Db>) -> Status {
+    let add_status = logic::user::add_user(&user, &mut *db).await;
+    let update_status = logic::user::update_user(&user, data.0, &mut *db).await;
 
-    match status.await {
+    match add_status && update_status {
         true => Status::Ok,
         false => Status::InternalServerError,
     }
 }
 
 #[get("/<id>")]
-async fn get_user(id: Snowflake, db: Connection<Db>) -> Either<Status, Value> {
-    let user = logic::user::fetch_user(id, db);
+async fn get_user(id: Snowflake, mut db: Connection<Db>) -> Either<Status, Value> {
+    let user = logic::user::fetch_user(id, &mut *db);
 
     match user.await {
         None => Left(Status::NotFound),
@@ -57,8 +58,8 @@ async fn get_user(id: Snowflake, db: Connection<Db>) -> Either<Status, Value> {
 }
 
 #[get("/<id>/exists")]
-async fn exists_user(id: Snowflake, db: Connection<Db>) -> Status {
-    let exists = logic::user::exists_user(id, db);
+async fn exists_user(id: Snowflake, mut db: Connection<Db>) -> Status {
+    let exists = logic::user::exists_user(id, &mut *db);
 
     match exists.await {
         true => Status::Ok,
