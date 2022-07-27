@@ -32,6 +32,8 @@ async fn get_user(id: Snowflake, db: Connection<Db>) -> Either<Status, Value> {
 
     match user.await {
         None => Left(Status::NotFound),
+        Some(user) if user.offset.is_none() && user.timezone.is_none() =>
+            Left(Status::NotFound),
         Some(user) => {
             let data = json!({
                 "userId": id,
