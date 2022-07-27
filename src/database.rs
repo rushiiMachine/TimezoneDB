@@ -7,13 +7,16 @@ use rocket_db_pools::{sqlx, Database};
 pub struct Db(sqlx::SqlitePool);
 
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
-    // match Db::fetch(&rocket) {
-    //     Some(db) => {
-    //         Ok(rocket)
-    //     }
-    //     None => Err(rocket),
-    // }
-    Ok(rocket)
+    match Db::fetch(&rocket) {
+        Some(db) => match sqlx::migrate!("src/migrations").run(&**db).await {
+            Ok(_) => Ok(rocket),
+            Err(e) => {
+                error!("Failed to initialize SQLx database: {}", e);
+                Err(rocket)
+            }
+        }
+        None => Err(rocket),
+    }
 }
 
 pub fn setup() -> AdHoc {
