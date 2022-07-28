@@ -9,13 +9,11 @@ pub struct DbUser {
     pub username: String,
     pub avatar_hash: String,
     pub timezone: Option<String>,
-    pub offset: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserUpdateData {
     pub timezone: Option<String>,
-    pub offset: Option<String>,
 }
 
 pub async fn add_user<'c, E>(user: &JwtData, db: E) -> bool
@@ -73,9 +71,8 @@ pub async fn update_user<'c, E>(user: &JwtData, data: UserUpdateData, db: E) -> 
     where
         E: Executor<'c, Database = Sqlite>
 {
-    query("UPDATE users SET timezone = ?, offset = ? WHERE id = ?;")
+    query("UPDATE users SET timezone = ? WHERE id = ?;")
         .bind(data.timezone)
-        .bind(data.offset)
         .bind(*user.user_id)
         .execute(db)
         .await
