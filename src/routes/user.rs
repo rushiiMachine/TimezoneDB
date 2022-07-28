@@ -14,7 +14,7 @@ use crate::utils::snowflake::Snowflake;
 
 #[get("/")]
 async fn get_current_user(user: JwtData) -> Redirect {
-    Redirect::to(user.user_id.to_string())
+    Redirect::to(format!("/api/user/{0}", *user.user_id))
 }
 
 #[delete("/")]

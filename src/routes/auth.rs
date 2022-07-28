@@ -48,7 +48,7 @@ async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Redi
 #[get("/logout")]
 async fn logout(cookies: &CookieJar<'_>) -> Redirect {
     cookies.remove(Cookie::named("loginInfo"));
-    Redirect::to(uri!(crate::index))
+    Redirect::to("/")
 }
 
 pub fn routes() -> AdHoc {
