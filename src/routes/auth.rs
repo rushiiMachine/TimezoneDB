@@ -18,7 +18,7 @@ async fn redirect() -> Redirect {
 
 #[get("/?error=access_denied")]
 async fn auth_denied() -> Redirect {
-    Redirect::to(uri!(crate::index))
+    Redirect::to("/")
 }
 
 #[get("/?<code>")]
