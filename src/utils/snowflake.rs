@@ -8,7 +8,7 @@ pub type Snowflake = i64;
 
 #[repr(transparent)]
 #[derive(Debug, Copy, Clone)]
-pub struct ApiSnowflake(Snowflake);
+pub struct ApiSnowflake(pub Snowflake);
 
 impl Deref for ApiSnowflake {
     type Target = Snowflake;

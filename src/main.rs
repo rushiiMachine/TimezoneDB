@@ -2,6 +2,7 @@
 extern crate rocket;
 
 use std::path::PathBuf;
+
 use include_dir::{Dir, include_dir};
 use rocket::{Build, Config, Rocket};
 use rocket::http::ContentType;
@@ -15,11 +16,11 @@ mod utils;
 mod logic;
 mod database;
 
-static REACT_BUILD: Dir = include_dir!("$CARGO_MANIFEST_DIR/ui/build");
+static REACT_BUILD: Dir = include_dir!("$CARGO_MANIFEST_DIR/build");
 
 #[get("/")]
 async fn index() -> RawHtml<&'static str> {
-    RawHtml(include_str!("../ui/build/index.html"))
+    RawHtml(include_str!("../build/index.html"))
 }
 
 #[get("/<path..>", rank = 2)]

@@ -25,18 +25,23 @@ impl<'r> FromRequest<'r> for JwtData {
     type Error = JwtDataError;
 
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        match request.cookies().get("loginInfo") {
-            Some(cookie) => {
-                match verify_token(cookie.value()) {
-                    Ok(data) =>
-                        Outcome::Success(data),
-                    Err(_) =>
-                        Outcome::Failure((Status::Unauthorized, JwtDataError::Invalid)),
-                }
-            }
-            None =>
-                Outcome::Failure((Status::Unauthorized, JwtDataError::Missing))
-        }
+        // match request.cookies().get("loginInfo") {
+        //     Some(cookie) => {
+        //         match verify_token(cookie.value()) {
+        //             Ok(data) =>
+        //                 Outcome::Success(data),
+        //             Err(_) =>
+        //                 Outcome::Failure((Status::Unauthorized, JwtDataError::Invalid)),
+        //         }
+        //     }
+        //     None =>
+        //         Outcome::Failure((Status::Unauthorized, JwtDataError::Missing))
+        // }
+        Outcome::Success(JwtData {
+            user_id: ApiSnowflake(295190422244950017),
+            avatar_hash: "4c06ae0abfd63ad9cb6cf6bdc4168358".to_string(),
+            username: "rushii".to_string()
+        })
     }
 }
 

@@ -1,6 +1,7 @@
-use rocket_db_pools::{Connection};
-use crate::database::Db;
+use rocket_db_pools::Connection;
+
 use crate::{logic, utils};
+use crate::database::Db;
 use crate::utils::discord;
 use crate::utils::jwt::JwtData;
 

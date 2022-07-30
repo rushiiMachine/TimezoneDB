@@ -13,10 +13,14 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 | PORT             | TYPE   | Default                                                | Description                                                  | 
 |------------------|--------|--------------------------------------------------------|--------------------------------------------------------------|
 | `PORT`           | u16    | 8000                                                   | The port to serve the app on                                 |
-| `HOST`           | String | *crash* in release, `http://localhost:{PORT}` in debug | The host string as the base section of the Discord redirect. |
-| `DISCORD_ID`     | u64    | *crash*                                                | The app client id from the OAuth section of the portal.      |
-| `DISCORD_SECRET` | String | *crash*                                                | The app secret **from the OAuth section of the portal**.     |
-| `JWT_SECRET`     | any    | *crash* in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                    | 
+| `HOST`           | String | *
+crash* in release, `http://localhost:{PORT}` in debug | The host string as the base section of the Discord redirect. |
+| `DISCORD_ID`     | u64    | *
+crash*                                                | The app client id from the OAuth section of the portal.      |
+| `DISCORD_SECRET` | String | *crash*                                                | The app secret **from the OAuth
+section of the portal**.     |
+| `JWT_SECRET`     | any    | *
+crash* in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                    | 
 
 ### Manual
 
@@ -30,4 +34,5 @@ $ ./target/release/timezone_db
 ```
 
 ### Docker
+
 TODO

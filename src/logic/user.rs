@@ -1,5 +1,6 @@
-use rocket_db_pools::sqlx::{query_as, query, Executor, Sqlite};
-use rocket::serde::{Serialize, Deserialize};
+use rocket::serde::{Deserialize, Serialize};
+use rocket_db_pools::sqlx::{Executor, query, query_as, Sqlite};
+
 use crate::JwtData;
 use crate::utils::snowflake::Snowflake;
 
@@ -18,7 +19,7 @@ pub struct UserUpdateData {
 
 pub async fn add_user<'c, E>(user: &JwtData, db: E) -> bool
     where
-        E: Executor<'c, Database = Sqlite>
+        E: Executor<'c, Database=Sqlite>
 {
     query("INSERT OR REPLACE INTO users (id, username, avatar_hash) VALUES (?, ?, ?);")
         .bind(*user.user_id)
@@ -32,7 +33,7 @@ pub async fn add_user<'c, E>(user: &JwtData, db: E) -> bool
 
 pub async fn fetch_user<'c, E>(id: Snowflake, db: E) -> Option<DbUser>
     where
-        E: Executor<'c, Database = Sqlite>
+        E: Executor<'c, Database=Sqlite>
 {
     query_as::<_, DbUser>("SELECT * FROM users WHERE id = ?;")
         .bind(id)
@@ -44,7 +45,7 @@ pub async fn fetch_user<'c, E>(id: Snowflake, db: E) -> Option<DbUser>
 
 pub async fn exists_user<'c, E>(id: Snowflake, db: E) -> bool
     where
-        E: Executor<'c, Database = Sqlite>
+        E: Executor<'c, Database=Sqlite>
 {
     query("SELECT id FROM users WHERE id = ?;")
         .bind(id)
@@ -57,7 +58,7 @@ pub async fn exists_user<'c, E>(id: Snowflake, db: E) -> bool
 
 pub async fn delete_user<'c, E>(id: Snowflake, db: E) -> bool
     where
-        E: Executor<'c, Database = Sqlite>,
+        E: Executor<'c, Database=Sqlite>,
 {
     query("DELETE FROM users WHERE id = ?;")
         .bind(id)
@@ -69,7 +70,7 @@ pub async fn delete_user<'c, E>(id: Snowflake, db: E) -> bool
 
 pub async fn update_user<'c, E>(user: &JwtData, data: UserUpdateData, db: E) -> bool
     where
-        E: Executor<'c, Database = Sqlite>
+        E: Executor<'c, Database=Sqlite>
 {
     query("UPDATE users SET timezone = ? WHERE id = ?;")
         .bind(data.timezone)

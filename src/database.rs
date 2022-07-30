@@ -1,6 +1,6 @@
 use rocket::{Build, fairing, Rocket};
 use rocket::fairing::AdHoc;
-use rocket_db_pools::{sqlx, Database};
+use rocket_db_pools::{Database, sqlx};
 
 #[derive(Database)]
 #[database("main")]

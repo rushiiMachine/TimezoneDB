@@ -46,7 +46,7 @@ async fn get_user(id: Snowflake, mut db: Connection<Db>) -> Either<Status, Value
         None => Left(Status::NotFound),
         Some(user) => {
             let data = json!({
-                "userId": id,
+                "userId": id.to_string(),
                 "timezone": "+0", // calculate offset if timezone != null
                 "timezoneId": user.timezone,
             });

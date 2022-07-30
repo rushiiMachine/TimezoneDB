@@ -1,4 +1,10 @@
-/target
-.idea
-*.iml
+**/target
+**/build
+**.idea
+**.iml
 database.db*
+
+/node_modules
+/.pnp
+.pnp.js
+pnpm-debug.log*

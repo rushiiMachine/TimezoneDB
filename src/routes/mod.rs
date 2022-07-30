@@ -1,6 +1,7 @@
 use rocket::fairing::AdHoc;
-use rocket::serde::{Serialize, Deserialize};
+use rocket::serde::{Deserialize, Serialize};
 use rocket::serde::json::Json;
+
 use crate::JwtData;
 
 mod user;
