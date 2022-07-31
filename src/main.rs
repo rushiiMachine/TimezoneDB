@@ -3,10 +3,15 @@ extern crate rocket;
 
 use std::path::PathBuf;
 
-use include_dir::{Dir, include_dir};
 use rocket::{Build, Config, Rocket};
-use rocket::http::ContentType;
-use rocket::response::content::RawHtml;
+use rocket::response::Redirect;
+
+#[cfg(debug_assertions)]
+use {
+    include_dir::{Dir, include_dir},
+    rocket::http::ContentType,
+    rocket::response::content::RawHtml,
+};
 
 use crate::utils::jwt::JwtData;
 
@@ -16,13 +21,28 @@ mod utils;
 mod logic;
 mod database;
 
+#[cfg(debug_assertions)]
+#[get("/")]
+async fn index() -> Redirect {
+    Redirect::to("http://localhost:3000")
+}
+
+#[cfg(debug_assertions)]
+#[get("/<path..>", rank = 2)]
+async fn files(path: PathBuf) -> Redirect {
+    Redirect::to(format!("http://localhost:3000/{}", path.to_string_lossy().to_string()))
+}
+
+#[cfg(not(debug_assertions))]
 static REACT_BUILD: Dir = include_dir!("$CARGO_MANIFEST_DIR/build");
 
+#[cfg(not(debug_assertions))]
 #[get("/")]
 async fn index() -> RawHtml<&'static str> {
     RawHtml(include_str!("../build/index.html"))
 }
 
+#[cfg(not(debug_assertions))]
 #[get("/<path..>", rank = 2)]
 async fn files(path: PathBuf) -> Option<(ContentType, &'static [u8])> {
     let file = REACT_BUILD
