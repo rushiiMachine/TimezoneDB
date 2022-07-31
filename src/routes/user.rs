@@ -2,15 +2,15 @@ use either::{Either, Left, Right};
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::Redirect;
-use rocket::serde::json::{Json, Value};
-use rocket::serde::json::serde_json::json;
+use rocket::serde::{Deserialize, Serialize};
+use rocket::serde::json::Json;
 use rocket_db_pools::Connection;
 
 use crate::database::Db;
 use crate::logic;
 use crate::logic::user::UserUpdateData;
 use crate::utils::jwt::JwtData;
-use crate::utils::snowflake::Snowflake;
+use crate::utils::snowflake::{ApiSnowflake, Snowflake};
 
 #[get("/")]
 async fn get_current_user(user: JwtData) -> Redirect {
@@ -38,19 +38,28 @@ async fn update_user(user: JwtData, data: Json<UserUpdateData>, mut db: Connecti
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct GetUserData {
+    #[serde(rename = "userId")]
+    id: ApiSnowflake,
+    #[serde(rename = "timezoneId")]
+    timezone_id: Option<String>,
+    timezone: String,
+}
+
 #[get("/<id>")]
-async fn get_user(id: Snowflake, mut db: Connection<Db>) -> Either<Status, Value> {
+async fn get_user(id: Snowflake, mut db: Connection<Db>) -> Either<Status, Json<GetUserData>> {
     let user = logic::user::fetch_user(id, &mut *db);
 
     match user.await {
         None => Left(Status::NotFound),
         Some(user) => {
-            let data = json!({
-                "userId": id.to_string(),
-                "timezone": "+0", // calculate offset if timezone != null
-                "timezoneId": user.timezone,
-            });
-            Right(data)
+            let data = GetUserData {
+                id: ApiSnowflake(user.id),
+                timezone: logic::user::calculate_tz_offset(&user.timezone),
+                timezone_id: user.timezone,
+            };
+            Right(Json(data))
         }
     }
 }

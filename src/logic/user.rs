@@ -1,3 +1,5 @@
+use chrono::{FixedOffset, Offset, Utc};
+use chrono_tz::Tz;
 use rocket::serde::{Deserialize, Serialize};
 use rocket_db_pools::sqlx::{Executor, query, query_as, Sqlite};
 
@@ -79,4 +81,12 @@ pub async fn update_user<'c, E>(user: &JwtData, data: UserUpdateData, db: E) -> 
         .await
         .map_err(|err| println!("error updating user: {:?}", err))
         .is_ok()
+}
+
+pub fn calculate_tz_offset(timezone: &Option<String>) -> String {
+    let tz: Tz = timezone.as_ref().unwrap_or(&"UTC".to_string())
+        .parse().unwrap_or(Tz::UTC);
+    let offset: FixedOffset = Utc::now().with_timezone(&tz).offset().fix();
+    let offset = offset.local_minus_utc() / (60 * 60);
+    offset.to_string()
 }
