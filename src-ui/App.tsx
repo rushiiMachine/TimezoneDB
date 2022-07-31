@@ -1,11 +1,9 @@
 import React from 'react';
-import {useQuery} from "@tanstack/react-query";
-import {getUser} from "./utils/api";
+import {useCurrentUser} from "./utils/api";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
-    const userQuery = useQuery(['user'], getUser)
-    console.log(userQuery)
+    const userQuery = useCurrentUser()
 
     return (
         <div className="min-h-screen bg-dark-black text-white">
