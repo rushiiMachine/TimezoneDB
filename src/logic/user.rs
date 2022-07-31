@@ -3,7 +3,7 @@ use chrono_tz::Tz;
 use rocket::serde::{Deserialize, Serialize};
 use rocket_db_pools::sqlx::{Executor, query, query_as, Sqlite};
 
-use crate::JwtData;
+use crate::utils::jwt::JwtData;
 use crate::utils::snowflake::Snowflake;
 
 #[derive(sqlx::FromRow, Debug)]

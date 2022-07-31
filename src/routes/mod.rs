@@ -2,11 +2,12 @@ use rocket::fairing::AdHoc;
 use rocket::serde::{Deserialize, Serialize};
 use rocket::serde::json::Json;
 
-use crate::JwtData;
+use crate::utils::jwt::JwtData;
 
 mod user;
 mod auth;
 mod catchers;
+mod root;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ApiStatusResponse<'a> {
@@ -28,6 +29,7 @@ pub fn setup() -> AdHoc {
             .mount("/api", routes![status])
             .attach(user::routes())
             .attach(auth::routes())
+            .attach(root::routes())
             .attach(catchers::setup())
     })
 }
