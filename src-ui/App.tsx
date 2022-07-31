@@ -1,6 +1,7 @@
 import React from 'react';
 import {useCurrentUser} from "./utils/api";
 import LoginPage from "./pages/LoginPage";
+import './App.scss';
 
 function App() {
     const userQuery = useCurrentUser()
