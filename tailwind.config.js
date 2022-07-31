@@ -9,10 +9,10 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                "gray": "#95A5A6",
-                "dark-gray": "#979C9F",
-                "darker-gray": "#7F8C8D",
-                "light-gray": "#BCC0C0",
+                // "gray": "#95A5A6",
+                // "dark-gray": "#979C9F",
+                // "darker-gray": "#7F8C8D",
+                // "light-gray": "#BCC0C0",
 
                 "blurple": {
                     default: "#5865F2",
