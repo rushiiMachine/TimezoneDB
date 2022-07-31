@@ -15,7 +15,7 @@ function App() {
                     <img src={icon} width={80} alt="TimezoneDB icon"/>
                     <p className="text-6xl font-bold mt-1 ml-2">TimezoneDB</p>
                 </div>
-                {userQuery.data?.userId ? <DashboardPage/> : <LoginPage/>}
+                {userQuery.isFetching ? null : userQuery.data?.userId ? <DashboardPage/> : <LoginPage/>}
             </div>
             {/*<div className="min-h-[25vh] pl-32 pr-32">*/}
             {/*    <hr className="border-t-2 border-t-dark-black"/>*/}

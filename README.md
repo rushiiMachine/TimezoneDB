@@ -20,7 +20,7 @@ crash*                                                | The app client id from t
 | `DISCORD_SECRET` | String | *crash*                                                | The app secret **from the OAuth
 section of the portal**.     |
 | `JWT_SECRET`     | any    | *
-crash* in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                    | 
+crash* in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                    |
 
 ### Manual
 
