@@ -29,10 +29,9 @@ async fn delete_user(user: JwtData, mut db: Connection<Db>) -> Status {
 
 #[put("/", data = "<data>", format = "application/json")]
 async fn update_user(user: JwtData, data: Json<UserUpdateData>, mut db: Connection<Db>) -> Status {
-    let add_status = logic::user::add_user(&user, &mut *db).await;
     let update_status = logic::user::update_user(&user, data.0, &mut *db).await;
 
-    match add_status && update_status {
+    match update_status {
         true => Status::Ok,
         false => Status::InternalServerError,
     }

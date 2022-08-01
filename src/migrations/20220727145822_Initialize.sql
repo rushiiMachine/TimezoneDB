@@ -1,5 +1,5 @@
-CREATE TABLE users
+CREATE TABLE tz_users
 (
-    id          INTEGER NOT NULL PRIMARY KEY,
-    timezone    TEXT
+    id          BIGINT NOT NULL PRIMARY KEY,
+    timezone    VARCHAR(35)
 );

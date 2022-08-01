@@ -37,6 +37,8 @@ lazy_static! {
         Hmac::new_from_slice(secret.as_bytes()).unwrap()
     };
 
+    pub static ref POSTGRES_URL: String = env::var("POSTGRES_URL")
+        .expect("missing env POSTGRES_URL");
     pub static ref DISCORD_ID: String = env::var("DISCORD_ID")
         .expect("missing env DISCORD_ID");
     pub static ref DISCORD_SECRET: String = env::var("DISCORD_SECRET")

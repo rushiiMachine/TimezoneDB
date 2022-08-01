@@ -4,7 +4,7 @@ use rocket_db_pools::{Database, sqlx};
 
 #[derive(Database)]
 #[database("main")]
-pub struct Db(sqlx::SqlitePool);
+pub struct Db(sqlx::PgPool);
 
 async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
     match Db::fetch(&rocket) {

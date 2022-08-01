@@ -10,13 +10,14 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 
 ### Environment variables
 
-| PORT             | TYPE   | Default                                              | Description                                                  | 
-|------------------|--------|------------------------------------------------------|--------------------------------------------------------------|
-| `PORT`           | u16    | 8000 (unmodifiable in debug)                         | The port to serve the app on                                 |
-| `HOST`           | String | crash in release, `http://localhost:{PORT}` in debug | The host string as the base section of the Discord redirect. |
-| `DISCORD_ID`     | u64    | crash                                                | The app client id from the OAuth section of the portal.      |
-| `DISCORD_SECRET` | String | crash                                                | The app secret **from theOAuthsection of the portal**.       |
-| `JWT_SECRET`     | any    | crash in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                    |
+| PORT             | TYPE   | Default                                              | Description                                                                  | 
+|------------------|--------|------------------------------------------------------|------------------------------------------------------------------------------|
+| `PORT`           | u16    | 8000 (unmodifiable in debug)                         | The port to serve the app on                                                 |
+| `HOST`           | String | crash in release, `http://localhost:{PORT}` in debug | The host string as the base section of the Discord redirect.                 |
+| `DISCORD_ID`     | u64    | crash                                                | The app client id from the OAuth section of the portal.                      |
+| `DISCORD_SECRET` | String | crash                                                | The app secret from the **OAuth section** of the portal.                   |
+| `JWT_SECRET`     | any    | crash in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                                    |
+| `POSTGRES_URL`   | String | crash                                                | The full [connection string](https://stackoverflow.com/a/20722229/13964629). |
 
 ### Manual
 
@@ -25,7 +26,7 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 $ pnpm install
 $ pnpm build
 $ cargo build --release
-$ export PORT=<port>;DISCORD_ID=<id>;DISCORD_SECRET=<secret>;HOST=<host>;JWT_SECRET=<key>;
+$ export PORT=<port>;DISCORD_ID=<id>;DISCORD_SECRET=<secret>;HOST=<host>;JWT_SECRET=<key>POSTGRES_URL=<connection_string>;
 $ ./target/release/timezone_db
 ```
 
@@ -39,8 +40,10 @@ bundled with the executable and served using rocket.
 1. Clone repo
 2. Install pnpm & rust toolchain
 3. Pull dependencies: `pnpm install`
-4. Run: `pnpm start` + `DISCORD_ID=<id>;DISCORD_SECRET=<secret> cargo run`
-5. App: `http://localhost:3000`
+4. Launch postgres: `docker run --name test-postgres -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres`
+6. Run backend: `DISCORD_ID=<id>;DISCORD_SECRET=<secret>;POSTGRES_URL="postgres://postgres:password@localhost:5432/postgres" cargo run`
+5. Run frontend: `pnpm start` 
+7. App: `http://localhost:3000`
 
 ## API
 Authentication is done through a JWT token in the `loginInfo` cookie that is sent with every request.

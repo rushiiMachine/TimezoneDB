@@ -36,9 +36,10 @@ features = ["json"]
 [dependencies.rocket_db_pools]
 #version = "0.1.0-rc.2"
 git = "https://github.com/pintariching/Rocket.git"
-features = ["sqlx_sqlite"]
+default-features = false
+features = ["sqlx_postgres"]
 
 [dependencies.sqlx]
 version = "0.6"
 default-features = false
-features = ["runtime-tokio-rustls", "sqlite", "macros", "migrate"]
+features = ["runtime-tokio-rustls", "postgres", "macros", "migrate"]

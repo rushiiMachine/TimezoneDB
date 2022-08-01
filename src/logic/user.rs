@@ -1,7 +1,7 @@
 use chrono::{FixedOffset, Offset, Utc};
 use chrono_tz::Tz;
 use rocket::serde::{Deserialize, Serialize};
-use rocket_db_pools::sqlx::{Executor, query, query_as, Sqlite};
+use rocket_db_pools::sqlx::{Executor, query, query_as, Postgres};
 
 use crate::utils::jwt::JwtData;
 use crate::utils::snowflake::Snowflake;
@@ -19,9 +19,9 @@ pub struct UserUpdateData {
 
 pub async fn add_user<'c, E>(user: &JwtData, db: E) -> bool
     where
-        E: Executor<'c, Database=Sqlite>
+        E: Executor<'c, Database=Postgres>
 {
-    query("INSERT OR REPLACE INTO users (id) VALUES (?);")
+    query("INSERT INTO tz_users (id) VALUES ($1) ON CONFLICT DO NOTHING;")
         .bind(*user.user_id)
         .execute(db)
         .await
@@ -31,9 +31,9 @@ pub async fn add_user<'c, E>(user: &JwtData, db: E) -> bool
 
 pub async fn fetch_user<'c, E>(id: Snowflake, db: E) -> Option<DbUser>
     where
-        E: Executor<'c, Database=Sqlite>
+        E: Executor<'c, Database=Postgres>
 {
-    query_as::<_, DbUser>("SELECT * FROM users WHERE id = ?;")
+    query_as::<_, DbUser>("SELECT * FROM tz_users WHERE id = $1;")
         .bind(id)
         .fetch_optional(db)
         .await
@@ -43,9 +43,9 @@ pub async fn fetch_user<'c, E>(id: Snowflake, db: E) -> Option<DbUser>
 
 pub async fn exists_user<'c, E>(id: Snowflake, db: E) -> bool
     where
-        E: Executor<'c, Database=Sqlite>
+        E: Executor<'c, Database=Postgres>
 {
-    query("SELECT id FROM users WHERE id = ?;")
+    query("SELECT id FROM tz_users WHERE id = $1;")
         .bind(id)
         .fetch_optional(db)
         .await
@@ -56,9 +56,9 @@ pub async fn exists_user<'c, E>(id: Snowflake, db: E) -> bool
 
 pub async fn delete_user<'c, E>(id: Snowflake, db: E) -> bool
     where
-        E: Executor<'c, Database=Sqlite>,
+        E: Executor<'c, Database=Postgres>,
 {
-    query("DELETE FROM users WHERE id = ?;")
+    query("DELETE FROM tz_users WHERE id = $1;")
         .bind(id)
         .execute(db)
         .await
@@ -68,11 +68,11 @@ pub async fn delete_user<'c, E>(id: Snowflake, db: E) -> bool
 
 pub async fn update_user<'c, E>(user: &JwtData, data: UserUpdateData, db: E) -> bool
     where
-        E: Executor<'c, Database=Sqlite>
+        E: Executor<'c, Database=Postgres>
 {
-    query("UPDATE users SET timezone = ? WHERE id = ?;")
-        .bind(data.timezone)
+    query("INSERT INTO tz_users (id, timezone) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET timezone = $2;")
         .bind(*user.user_id)
+        .bind(data.timezone)
         .execute(db)
         .await
         .map_err(|err| println!("error updating user: {:?}", err))
