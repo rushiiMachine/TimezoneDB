@@ -1,4 +1,4 @@
-# TimezoneDB (WIP)
+# TimezoneDB ![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FDiamondMiner88%2FTimezoneDB&count_bg=%2379C83D&title_bg=%23555555&icon=github.svg&icon_color=%23E7E7E7&title=views&edge_flat=true)
 
 A rewrite for the backend of the BetterDiscord/Aliucord's Timezones plugins.
 
@@ -15,7 +15,7 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 | `PORT`           | u16    | 8000 (unmodifiable in debug)                         | The port to serve the app on                                                 |
 | `HOST`           | String | crash in release, `http://localhost:{PORT}` in debug | The host string as the base section of the Discord redirect.                 |
 | `DISCORD_ID`     | u64    | crash                                                | The app client id from the OAuth section of the portal.                      |
-| `DISCORD_SECRET` | String | crash                                                | The app secret from the **OAuth section** of the portal.                   |
+| `DISCORD_SECRET` | String | crash                                                | The app secret from the **OAuth section** of the portal.                     |
 | `JWT_SECRET`     | any    | crash in release, `timezone_db` in debug build       | Any value used for encrypting JWT tokens.                                    |
 | `POSTGRES_URL`   | String | crash                                                | The full [connection string](https://stackoverflow.com/a/20722229/13964629). |
 
@@ -78,7 +78,7 @@ Gets the data from the DB and returns json. Returns 404 if no user with that id 
 ### GET `/api/user/<id>/exists`
 Checks whether a user is stored in the DB. Returns 200/404 status code.
 
-### DELETE `/api/user/` (auth required)
+### DELETE `/api/user` (auth required)
 Deletes the current user from the db completely.
 
 ### PUT `/api/user` (auth required)
