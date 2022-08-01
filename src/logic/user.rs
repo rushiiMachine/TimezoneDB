@@ -80,9 +80,19 @@ pub async fn update_user<'c, E>(user: &JwtData, data: UserUpdateData, db: E) -> 
 }
 
 pub fn calculate_tz_offset(timezone: &Option<String>) -> String {
-    let tz: Tz = timezone.as_ref().unwrap_or(&"UTC".to_string())
-        .parse().unwrap_or(Tz::UTC);
+    let tz: Tz = timezone.as_ref()
+        .map(|tz| tz.parse().ok())
+        .unwrap_or(None)
+        .unwrap_or(Tz::UTC);
     let offset: FixedOffset = Utc::now().with_timezone(&tz).offset().fix();
-    let offset = offset.local_minus_utc() / (60 * 60);
-    offset.to_string()
+    let minutes = offset.local_minus_utc() / 60;
+    let hours = minutes / 60;
+    let minutes_remainder = minutes % 60;
+
+    let pos_sign = if minutes > 0 { "+" } else { "" };
+    if minutes_remainder > 0 {
+        format!("{pos_sign}{hours}.{minutes_remainder}")
+    } else {
+        format!("{pos_sign}{hours}")
+    }
 }
