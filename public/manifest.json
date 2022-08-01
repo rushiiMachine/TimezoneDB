@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "TimezoneDB",
+  "name": "TimezoneDB",
+  "description": "The backend for the BetterDiscord/Aliucord's Timezones plugins",
   "icons": [
     {
       "src": "favicon.ico",
