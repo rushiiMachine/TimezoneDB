@@ -51,7 +51,7 @@ function DashboardPage() {
                 defaultInputValue={!timezoneId ? browserTimezone : ""}
                 defaultValue={timezoneId ? toSelectOption(timezoneId) : null}
                 value={timezoneId ? toSelectOption(timezoneId) : null}
-                autoFocus={!timezoneId}
+                autoFocus={true}
                 isClearable={true}
                 options={timezoneOptions}
                 onChange={(tz) => updateMutation.mutate({timezone: tz?.value})}
