@@ -46,7 +46,7 @@ function DashboardPage() {
     return (
         <div className="flex inline-flex justify-center items-center mt-2 transition-transform">
             <div className={status !== null ? "min-w-[2rem]" : ""}/>
-            {userQuery.data && <Select
+            {userQuery.data !== undefined && <Select
                 defaultMenuIsOpen={!timezoneId}
                 defaultInputValue={!timezoneId ? browserTimezone : ""}
                 defaultValue={timezoneId ? toSelectOption(timezoneId) : null}
