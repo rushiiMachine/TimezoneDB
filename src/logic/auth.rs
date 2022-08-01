@@ -17,8 +17,6 @@ pub async fn login_user(oauth_code: String, mut db: Connection<Db>) -> Result<St
 
     let jwt_data = JwtData {
         user_id: user.id,
-        avatar_hash: user.avatar,
-        username: user.username,
     };
 
     logic::user::add_user(&jwt_data, &mut *db).await;

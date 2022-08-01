@@ -10,8 +10,6 @@ use crate::utils::snowflake::ApiSnowflake;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JwtData {
     pub user_id: ApiSnowflake,
-    pub avatar_hash: String,
-    pub username: String,
 }
 
 #[derive(Debug)]
