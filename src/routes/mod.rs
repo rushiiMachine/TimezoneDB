@@ -10,15 +10,14 @@ mod catchers;
 mod root;
 
 #[derive(Debug, Serialize, Deserialize)]
-struct ApiStatusResponse<'a> {
-    status: &'a str,
+struct ApiStatusResponse {
+    #[serde(rename = "loggedIn")]
     logged_in: bool,
 }
 
 #[get("/")]
-fn status(user: Option<JwtData>) -> Json<ApiStatusResponse<'static>> {
+fn status(user: Option<JwtData>) -> Json<ApiStatusResponse> {
     Json(ApiStatusResponse {
-        status: "online",
         logged_in: user.is_some(),
     })
 }
