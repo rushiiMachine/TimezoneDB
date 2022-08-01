@@ -13,7 +13,7 @@ mod database;
 fn rocket() -> Rocket<Build> {
     let figment = Config::figment()
         .merge(("port", *constants::PORT))
-        .merge(("databases.main", &*constants::POSTGRES_URL));
+        .merge(("databases.main.url", &*constants::POSTGRES_URL));
 
     rocket::custom(figment)
         .attach(database::setup())
