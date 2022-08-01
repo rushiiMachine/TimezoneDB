@@ -35,12 +35,6 @@ impl<'r> FromRequest<'r> for JwtData {
             None =>
                 Outcome::Failure((Status::Unauthorized, JwtDataError::Missing))
         }
-        // Outcome::Success(JwtData {
-        //     user_id: ApiSnowflake(295190422244950017),
-        //     avatar_hash: "4c06ae0abfd63ad9cb6cf6bdc4168358".to_string(),
-        //     username: "rushii".to_string()
-        // })
-        // Outcome::Failure((Status::Unauthorized, JwtDataError::Missing))
     }
 }
 
