@@ -91,7 +91,7 @@ pub fn calculate_tz_offset(timezone: &Option<String>) -> String {
 
     let pos_sign = if minutes > 0 { "+" } else { "" };
     if minutes_remainder > 0 {
-        format!("{pos_sign}{hours}.{minutes_remainder}")
+        format!("{pos_sign}{hours}:{minutes_remainder}")
     } else {
         format!("{pos_sign}{hours}")
     }

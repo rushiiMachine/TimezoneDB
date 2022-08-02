@@ -73,7 +73,7 @@ Gets the data from the DB and returns json. Returns 404 if no user with that id 
 |------------|--------|-------------------------------------------------------------------|
 | userId     | string | Discord user snowflake id.                                        |
 | timezoneId | string | The timezone name.                                                |
-| timezone   | string | The calculated UTC offset of the timezone. Ex. `+5`, `-5` `+5.30` |
+| timezone   | string | The calculated UTC offset of the timezone. Ex. `+5`, `-5` `+5:30` |
 
 ### GET `/api/user/<id>/exists`
 Checks whether a user is stored in the DB. Returns 200/404 status code.
