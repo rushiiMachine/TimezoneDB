@@ -1,5 +1,5 @@
 import React from 'react';
-import {useCurrentUser, useIsLoggedIn} from "./utils/api";
+import {useIsLoggedIn} from "./utils/api";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import icon from './assets/icon.svg';
@@ -13,7 +13,8 @@ function App() {
             <div className="min-h-screen flex flex-col justify-center">
                 <div className="inline-flex max-w-fit self-center mb-4">
                     <img src={icon} width={80} alt="TimezoneDB icon"/>
-                    <p className="text-6xl font-bold mt-1 ml-2">TimezoneDB</p>
+                    <a className="text-6xl font-bold mt-2 ml-2 hover:underline"
+                       href="https://github.com/DiamondMiner88/TimezoneDB">TimezoneDB</a>
                 </div>
                 {loggedInQuery.isFetching ? null : loggedInQuery.data ? <DashboardPage/> : <LoginPage/>}
             </div>
