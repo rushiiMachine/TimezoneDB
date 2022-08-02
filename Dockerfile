@@ -5,7 +5,11 @@ ADD public ./public
 ADD src-ui ./src-ui
 RUN npm i && npm run build
 
-FROM rust AS rust
+FROM rust:alpine AS rust
+RUN apk add --no-cache \
+    musl-dev \
+    pkgconfig \
+    openssl-dev
 WORKDIR /app/
 ADD Cargo.toml Cargo.lock build.rs ./
 ADD src ./src
@@ -16,5 +20,4 @@ FROM alpine
 WORKDIR /app
 COPY --from=rust /app/target/release/timezone_db .
 
-#CMD ["/bin/ls", "-l", "/app"]
 CMD ["/app/timezone_db"]
