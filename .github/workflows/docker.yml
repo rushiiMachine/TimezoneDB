@@ -9,6 +9,8 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,14 +33,14 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            my-docker-hub-namespace/my-docker-hub-repository
             ghcr.io/${{ github.repository }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+#          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
