@@ -15,9 +15,9 @@ ADD Cargo.toml Cargo.lock build.rs ./
 ADD src ./src
 COPY --from=react /app/build ./build
 RUN cargo build --release --target $(uname -m)-unknown-linux-musl
+RUN cp /app/target/$(uname -m)-unknown-linux-musl/release/timezone_db .
 
 FROM alpine
 WORKDIR /app
-COPY --from=rust /app/target/release/timezone_db .
-
+COPY --from=rust /app/timezone_db .
 CMD ["/app/timezone_db"]
