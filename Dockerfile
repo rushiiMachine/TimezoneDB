@@ -14,7 +14,7 @@ WORKDIR /app/
 ADD Cargo.toml Cargo.lock build.rs ./
 ADD src ./src
 COPY --from=react /app/build ./build
-RUN cargo build --release
+RUN cargo build --release --target $(uname -i)-unknown-linux-musl
 
 FROM alpine
 WORKDIR /app
