@@ -28,9 +28,10 @@ WORKDIR /app/
 #ENV CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
 
 # Setup musl cross compiler
+# https://musl.cc/aarch64-linux-musl-cross.tgz & https://musl.cc/x86_64-linux-musl-cross.tgz
 RUN cd /tmp && \
-    wget https://musl.cc/aarch64-linux-musl-cross.tgz && \
-    wget https://musl.cc/x86_64-linux-musl-cross.tgz && \
+    wget https://github.com/xmake-mirror/musl.cc/releases/download/20210202/aarch64-linux-musl-cross.linux.tgz -O aarch64-linux-musl-cross.tgz && \
+    wget https://github.com/xmake-mirror/musl.cc/releases/download/20210202/x86_64-linux-musl-cross.linux.tgz -O x86_64-linux-musl-cross.tgz && \
     tar -xzvf aarch64-linux-musl-cross.tgz && \
     tar -xzvf x86_64-linux-musl-cross.tgz
 ENV CC_aarch64_unknown_linux_musl=/tmp/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc
