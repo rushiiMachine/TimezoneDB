@@ -29,10 +29,10 @@ WORKDIR /app/
 
 # Setup musl cross compiler
 RUN cd /tmp && \
-    wget -q https://musl.cc/aarch64-linux-musl-cross.tgz && \
-    tar -xzf aarch64-linux-musl-cross.tgz && \
-    wget -q https://musl.cc/x86_64-linux-musl-cross.tgz && \
-    tar -xzf x86_64-linux-musl-cross.tgz
+    wget https://musl.cc/aarch64-linux-musl-cross.tgz && \
+    wget https://musl.cc/x86_64-linux-musl-cross.tgz && \
+    tar -xzvf aarch64-linux-musl-cross.tgz && \
+    tar -xzvf x86_64-linux-musl-cross.tgz
 ENV CC_aarch64_unknown_linux_musl=/tmp/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc
 ENV CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld"
 ENV CC_x86_64_unknown_linux_musl=/tmp/x86_64-linux-musl-cross/bin/x86_64-linux-musl-gcc
