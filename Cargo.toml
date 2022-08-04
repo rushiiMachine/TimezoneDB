@@ -25,6 +25,9 @@ lazy_static = "1.4"
 thiserror = "1.0"
 either = "1.7"
 
+# Explicit dependency to compile openssl from openssl-src instead as a workaround for cross-compilation
+openssl = { version = "0.10", features = ["vendored"] }
+
 # NOTE: forced to use the pr which uses sqlx 0.6 until merged + rocket_db_pools is updated
 # https://github.com/SergioBenitez/Rocket/pull/2242
 
