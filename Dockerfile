@@ -56,5 +56,6 @@ RUN mv /app/target/$(echo $TARGETARCH | sed 's/arm64/aarch64/;s/amd64/x86_64/')-
 
 FROM --platform=$TARGETPLATFORM alpine
 WORKDIR /app
+EXPOSE 8000
 COPY --from=RUST_BUILD /app/timezone_db .
 CMD ["/app/timezone_db"]
