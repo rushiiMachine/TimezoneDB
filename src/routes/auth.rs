@@ -1,5 +1,6 @@
+use either::{Either, Left, Right};
 use rocket::fairing::AdHoc;
-use rocket::http::{Cookie, CookieJar, SameSite};
+use rocket::http::{Cookie, CookieJar, SameSite, Status};
 use rocket::http::uri::{Reference, Uri};
 use rocket::response::Redirect;
 use rocket::time::{Duration, OffsetDateTime};
@@ -22,7 +23,7 @@ async fn auth_denied() -> Redirect {
 }
 
 #[get("/?<code>")]
-async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Redirect {
+async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Either<Redirect, Status> {
     match logic::auth::login_user(code, db).await {
         Ok(jwt_token) => {
             let cookie = Cookie::build("loginInfo", jwt_token)
@@ -35,14 +36,14 @@ async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Redi
             cookies.add(cookie);
         }
         Err(err) => {
-            // TODO: redirect with error message
             println!("{:?}", err);
+            return Right(Status::InternalServerError)
         }
     }
 
     let host = Uri::parse::<Reference>(&*constants::HOST)
         .expect("invalid HOST env var");
-    Redirect::to(host)
+    Left(Redirect::to(host))
 }
 
 #[get("/logout")]
