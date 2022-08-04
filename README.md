@@ -49,7 +49,7 @@ bundled with the executable and served using rocket.
 Authentication is done through a JWT token in the `loginInfo` cookie that is sent with every request.
 
 ### GET `/api` (auth optional)
-Response: `{ logged_in: bool }`
+Response: `{ loggedIn: bool }`
 
 ### GET `/api/auth`
 Redirects to the currently configured Discord OAuth url.

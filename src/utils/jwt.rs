@@ -9,6 +9,7 @@ use crate::utils::snowflake::ApiSnowflake;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JwtData {
+    #[serde(rename = "userId")]
     pub user_id: ApiSnowflake,
 }
 
