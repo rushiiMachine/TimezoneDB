@@ -6,8 +6,9 @@ use rocket::fairing::AdHoc;
 use {
     include_dir::{Dir, include_dir},
     rocket::http::ContentType,
-    rocket::response::content::RawHtml,
+    crate::utils::cache_control::CacheControl,
 };
+
 #[cfg(debug_assertions)]
 use rocket::response::Redirect;
 
@@ -16,18 +17,20 @@ static REACT_BUILD: Dir = include_dir!("$CARGO_MANIFEST_DIR/build");
 
 #[cfg(not(debug_assertions))]
 #[get("/")]
-async fn index() -> RawHtml<&'static str> {
-    RawHtml(REACT_BUILD.get_file("index.html").unwrap().contents_utf8().unwrap())
+async fn index() -> CacheControl<(ContentType, &'static str)> {
+    let file = REACT_BUILD.get_file("index.html").unwrap();
+    let contents = file.contents_utf8().unwrap();
+    CacheControl((ContentType::HTML, contents))
 }
 
 #[cfg(not(debug_assertions))]
 #[get("/<path..>", rank = 999)]
-async fn files(path: PathBuf) -> Option<(ContentType, &'static [u8])> {
+async fn files(path: PathBuf) -> CacheControl<Option<(ContentType, &'static [u8])>> {
     let file = REACT_BUILD
         .get_file(&path.to_string_lossy().to_string())
         .map(|file| file.contents());
 
-    match file {
+    let option = match file {
         None => None,
         Some(bytes) => {
             let ext = &path
@@ -42,7 +45,8 @@ async fn files(path: PathBuf) -> Option<(ContentType, &'static [u8])> {
                     Some((ContentType::Binary, bytes)),
             }
         }
-    }
+    };
+    CacheControl(option)
 }
 
 
