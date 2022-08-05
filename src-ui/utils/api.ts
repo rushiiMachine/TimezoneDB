@@ -14,12 +14,12 @@ const noRefetchOptions = {
     refetchOnReconnect: false,
 }
 
-function handleResponse(res: Response): Promise<Response> {
+async function handleResponse(res: Response): Promise<Response> {
     return res.status === 200
         ? Promise.resolve(res)
         : res.status === 401
             ? Promise.reject("unauthorized")
-            : Promise.reject(`${res.statusText} ${res.text()}`)
+            : Promise.reject(`${res.statusText} ${await res.text()}`)
 }
 
 function handleResponseData<T>(res: Response): Promise<T | null> {

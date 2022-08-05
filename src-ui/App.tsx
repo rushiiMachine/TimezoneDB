@@ -3,6 +3,8 @@ import {useIsLoggedIn} from "./utils/api";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import icon from './assets/icon.svg';
+import errorIcon from "./assets/error.svg"
+import refreshIcon from "./assets/refresh.svg"
 import './App.scss';
 
 function App() {
@@ -16,14 +18,18 @@ function App() {
                     <a className="text-6xl font-bold mt-2 ml-2 hover:underline"
                        href="https://github.com/DiamondMiner88/TimezoneDB">TimezoneDB</a>
                 </div>
-                {loggedInQuery.isFetching ? null : loggedInQuery.data ? <DashboardPage/> : <LoginPage/>}
+
+                {loggedInQuery.isFetching &&
+                    <img alt="loading indicator" src={refreshIcon} width={40} className="spinning self-center"/>}
+
+                {loggedInQuery.isSuccess &&
+                    (loggedInQuery.data ? <DashboardPage/> : <LoginPage/>)}
+
+                {loggedInQuery.error && <div className="inline-flex max-w-fit self-center">
+                    <img alt="error icon" src={errorIcon} width={35}/>
+                    <p className="text-2xl ml-2">{String(loggedInQuery.error)}</p>
+                </div>}
             </div>
-            {/*<div className="min-h-[25vh] pl-32 pr-32">*/}
-            {/*    <hr className="border-t-2 border-t-dark-black"/>*/}
-            {/*    <div className="inline-flex ml-40 mt-10 ">*/}
-            {/*footer*/}
-            {/*    </div>*/}
-            {/*</div>*/}
         </div>
     );
 }
