@@ -36,8 +36,10 @@ async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Eith
             cookies.add(cookie);
         }
         Err(err) => {
-            println!("{:?}", err);
-            return Right(Status::InternalServerError)
+            // TODO: return InvalidRequest if invalid code
+
+            println!("failed to auth user {:?}", err);
+            return Right(Status::InternalServerError);
         }
     }
 

@@ -38,7 +38,7 @@ will end up serving index.html from CRA. However, the rust portion is built in r
 bundled with the executable and served using rocket.
 
 1. Clone repo
-2. Install pnpm & rust toolchain
+2. Install pnpm & rust toolchain & perl (for openssl-sys)
 3. Pull dependencies: `pnpm install`
 4. Launch postgres: `docker run --name test-postgres -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres`
 6. Run backend: `DISCORD_ID=<id>;DISCORD_SECRET=<secret>;POSTGRES_URL="postgres://postgres:password@localhost:5432/postgres" cargo run`
