@@ -9,7 +9,11 @@ use rocket_db_pools::Connection;
 use crate::database::Db;
 use crate::logic;
 use crate::logic::user::UserUpdateData;
+use crate::routes::catchers;
+use crate::routes::catchers::ApiError;
+use crate::utils::cache_control::CacheControl;
 use crate::utils::jwt::JwtData;
+use crate::utils::raw_status::RawStatus;
 use crate::utils::snowflake::{ApiSnowflake, Snowflake};
 
 #[get("/")]
@@ -47,22 +51,24 @@ struct GetUserData {
 }
 
 #[get("/<id>")]
-async fn get_user(id: Snowflake, mut db: Connection<Db>) -> Either<Status, Json<GetUserData>> {
+async fn get_user(id: Snowflake, mut db: Connection<Db>) -> CacheControl<RawStatus<Either<Json<GetUserData>, Json<ApiError>>>> {
     let user = logic::user::fetch_user(id, &mut *db);
 
-    match user.await {
-        None => Left(Status::NotFound),
+    let data = match user.await {
+        None =>
+            RawStatus(Status::NotFound, Right(catchers::not_found())),
         Some(user) if user.timezone.is_none() =>
-            Left(Status::NotFound),
+            RawStatus(Status::NotFound, Right(catchers::not_found())),
         Some(user) => {
             let data = GetUserData {
                 id: ApiSnowflake(user.id),
                 timezone: logic::user::calculate_tz_offset(&user.timezone),
                 timezone_id: user.timezone,
             };
-            Right(Json(data))
+            RawStatus(Status::Ok, Left(Json(data)))
         }
-    }
+    };
+    CacheControl(data)
 }
 
 #[get("/<id>/exists")]
