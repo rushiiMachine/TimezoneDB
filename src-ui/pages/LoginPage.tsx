@@ -1,11 +1,8 @@
 import React from 'react';
 import DiscordLegacyIcon from "../assets/discord_legacy_icon.svg"
+import {redirectLogin} from "../utils/api";
 
 function LoginPage() {
-    const redirectLogin = () => {
-        window.location.replace("/api/auth")
-    }
-
     return (
         <div className="flex flex-col justify-center items-center">
             <button onClick={redirectLogin}

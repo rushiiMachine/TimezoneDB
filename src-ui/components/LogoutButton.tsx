@@ -1,13 +1,10 @@
 import React from 'react';
 import logoutIcon from '../assets/logout.svg';
-
-const logoutUser = () => {
-    window.location.replace("/api/auth/logout");
-};
+import {redirectLogout} from "../utils/api";
 
 function LogoutButton() {
     return <img
-        onClick={logoutUser}
+        onClick={redirectLogout}
         src={logoutIcon}
         alt="Logout"
         width={35} height={35}

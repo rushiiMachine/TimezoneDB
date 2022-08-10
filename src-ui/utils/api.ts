@@ -1,6 +1,7 @@
 import {useQuery, UseQueryResult} from "@tanstack/react-query";
 
-const API_URL = window.location.origin + "/api"
+const HOST = window.location.origin;
+const API_URL = `${HOST}/api`;
 
 interface User {
     userId: string,
@@ -61,8 +62,18 @@ function updateCurrentUser(data: { timezone: string | null | undefined }): Promi
     ).then(handleResponse)
 }
 
+const redirectLogout = () => {
+    window.location.replace(`${HOST}/api/auth/logout`);
+};
+
+const redirectLogin = () => {
+    window.location.replace(`${HOST}/api/auth`)
+}
+
 export {
     useIsLoggedIn,
     useCurrentUser,
     updateCurrentUser,
+    redirectLogout,
+    redirectLogin,
 }
