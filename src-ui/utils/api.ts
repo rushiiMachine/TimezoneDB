@@ -34,7 +34,7 @@ function handleResponseData<T>(res: Response): Promise<T | null> {
 function useIsLoggedIn(): UseQueryResult<boolean> {
     return useQuery(
         ['logged_in'],
-        () => fetch(API_URL)
+        () => fetch(API_URL, {headers: {'Cache-Control': 'no-store'}})
             .then(handleResponse)
             .then(res => res.json() as Promise<{ loggedIn: boolean }>)
             .then(data => data.loggedIn),
@@ -45,7 +45,7 @@ function useIsLoggedIn(): UseQueryResult<boolean> {
 function useCurrentUser(): UseQueryResult<User | null> {
     return useQuery(
         ['user'],
-        () => fetch(`${API_URL}/user`, {headers: {'Cache-Control': 'no-store'}})
+        () => fetch(`${API_URL}/user`, {headers: {'Cache-Control': 'no-cache'}})
             .then(handleResponseData),
         noRefetchOptions,
     )
