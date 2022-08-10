@@ -44,7 +44,8 @@ function useIsLoggedIn(): UseQueryResult<boolean> {
 function useCurrentUser(): UseQueryResult<User | null> {
     return useQuery(
         ['user'],
-        () => fetch(`${API_URL}/user`).then(handleResponseData),
+        () => fetch(`${API_URL}/user`, {headers: {'Cache-Control': 'no-store'}})
+            .then(handleResponseData),
         noRefetchOptions,
     )
 }
