@@ -25,7 +25,7 @@ function App() {
                 {loggedInQuery.isSuccess &&
                     (loggedInQuery.data ? <DashboardPage/> : <LoginPage/>)}
 
-                {loggedInQuery.error && <div className="inline-flex max-w-fit self-center">
+                {!!loggedInQuery.error && <div className="inline-flex max-w-fit self-center">
                     <img alt="error icon" src={errorIcon} width={35}/>
                     <p className="text-2xl ml-2">{String(loggedInQuery.error)}</p>
                 </div>}
