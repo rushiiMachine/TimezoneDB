@@ -12,7 +12,7 @@ function App() {
     const loggedInQuery = useIsLoggedIn()
 
     return (
-        <div className="app bg-not-black text-white">
+        <div className="app bg-not-black text-white overflow-scroll">
             <div className="min-h-screen flex flex-col justify-center">
                 <div className="inline-flex max-w-fit self-center mb-4">
                     <img src={icon} width={80} alt="TimezoneDB icon"/>
