@@ -10,6 +10,8 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 
 ### Environment variables
 
+Can be modified in the [.env](./.env) file.
+
 | PORT             | TYPE   | Default                                              | Description                                                                  | 
 |------------------|--------|------------------------------------------------------|------------------------------------------------------------------------------|
 | `PORT`           | u16    | 8000 (unmodifiable in debug)                         | The port to serve the app on                                                 |

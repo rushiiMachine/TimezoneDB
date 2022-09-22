@@ -1,6 +1,7 @@
 **/target
 **/build
 **.idea
+**.vscode
 **.iml
 /node_modules
 /.pnp

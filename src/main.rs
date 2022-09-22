@@ -12,6 +12,7 @@ mod database;
 
 #[launch]
 fn rocket() -> Rocket<Build> {
+    kankyo::init().expect("failed to read .env file");
     let figment = Config::figment()
         .merge(("port", *constants::PORT))
         .merge(("databases.main.url", &*constants::POSTGRES_URL))
