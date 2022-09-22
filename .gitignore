@@ -7,3 +7,4 @@
 /.pnp
 .pnp.js
 pnpm-debug.log*
+.env

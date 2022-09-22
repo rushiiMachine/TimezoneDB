@@ -28,7 +28,10 @@ Can be modified in the [.env](./.env) file.
 $ pnpm install
 $ pnpm build
 $ cargo build --release
+# Set environment variables manually
 $ export PORT=<port>;DISCORD_ID=<id>;DISCORD_SECRET=<secret>;HOST=<host>;JWT_SECRET=<key>POSTGRES_URL=<connection_string>;
+# or using .env
+$ cp .env.local .env
 $ ./target/release/timezone_db
 ```
 
