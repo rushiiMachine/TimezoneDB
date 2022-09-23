@@ -48,8 +48,8 @@ ARG TARGETARCH
 RUN rustup target add $(echo $TARGETARCH | sed 's/arm64/aarch64/;s/amd64/x86_64/')-unknown-linux-musl
 
 ADD build.rs ./
-ADD .env ./
 ADD src ./src
+COPY .env.local ./.env
 COPY --from=REACT_BUILD /app/build ./build
 
 RUN cargo build --release --target $(echo $TARGETARCH | sed 's/arm64/aarch64/;s/amd64/x86_64/')-unknown-linux-musl
