@@ -10,7 +10,7 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 
 ### Environment variables
 
-Can be modified in the [.env](./.env) file.
+Can be modified in the [.env](./.env.example) file.
 
 | PORT             | TYPE   | Default                                              | Description                                                                  | 
 |------------------|--------|------------------------------------------------------|------------------------------------------------------------------------------|
@@ -31,7 +31,7 @@ $ cargo build --release
 # Set environment variables manually
 $ export PORT=<port>;DISCORD_ID=<id>;DISCORD_SECRET=<secret>;HOST=<host>;JWT_SECRET=<key>POSTGRES_URL=<connection_string>;
 # or using .env
-$ mv .env.local .env
+$ mv .env.example .env
 $ ./target/release/timezone_db
 ```
 
