@@ -3,3 +3,4 @@ pub(crate) mod discord;
 pub(crate) mod jwt;
 pub(crate) mod cache_control;
 pub(crate) mod raw_status;
+pub(crate) mod cors;

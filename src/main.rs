@@ -3,6 +3,7 @@ extern crate rocket;
 
 use rocket::{Build, Config, Rocket};
 use rocket::fairing::AdHoc;
+use crate::utils::cors::CORS;
 
 mod constants;
 mod routes;
@@ -24,6 +25,7 @@ fn rocket() -> Rocket<Build> {
     rocket::custom(figment)
         .attach(database::setup())
         .attach(routes::setup())
+        .attach(CORS())
         .attach(AdHoc::on_liftoff("Liftoff log", |_| Box::pin(async move {
             println!("Launched TimezoneDB!");
         })))
