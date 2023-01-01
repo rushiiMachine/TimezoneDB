@@ -75,24 +75,26 @@ Removes the auth cookie and redirects to `/`
 Redirects to `/api/user/<current_id>` based on the JWT otherwise throws 401 if no auth.
 
 ### GET `/api/user/<id>`
-Gets the data from the DB and returns json. Returns 404 if no user with that id is found.
+Gets the data from the DB and returns json. Returns 404 if no user with that id is found. Returns a user object.
 
+#### User
 | Field      | Type   | Description                                                       |
 |------------|--------|-------------------------------------------------------------------|
 | userId     | string | Discord user snowflake id.                                        |
 | timezoneId | string | The timezone name.                                                |
 | timezone   | string | The calculated UTC offset of the timezone. Ex. `+5`, `-5` `+5:30` |
 
-### GET `/api/user/<id>/exists`
+### POST `/api/user/bulk`
+Gets multiple users at the same time. Body is an array of string ids.
+Returns an object of `{<userId>: null | <user>}`
 
+### GET `/api/user/<id>/exists`
 Checks whether a user is stored in the DB. Returns 200/404 status code.
 
 ### DELETE `/api/user` (auth required)
-
 Deletes the current user from the db completely.
 
 ### PUT `/api/user` (auth required)
-
 Updates the current user's data. Missing field = no update.
 
 Body:

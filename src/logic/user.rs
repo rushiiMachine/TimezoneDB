@@ -43,7 +43,16 @@ pub async fn fetch_user<'c, E>(id: Snowflake, db: E) -> Option<DbUser>
         .fetch_optional(db)
         .await
         .map_err(|err| println!("error fetching user: {:?}", err))
-        .unwrap_or(None)
+        .unwrap()
+}
+
+pub async fn fetch_users<'c, E>(ids: &Vec<Snowflake>, db: E) -> Vec<DbUser>
+    where E: Executor<'c, Database=Postgres>
+{
+    query_as::<_, DbUser>("SELECT * FROM tz_users WHERE id = ANY($1);")
+        .bind(ids.as_slice())
+        .fetch_all(db).await
+        .unwrap()
 }
 
 pub async fn exists_user<'c, E>(id: Snowflake, db: E) -> bool
@@ -55,7 +64,7 @@ pub async fn exists_user<'c, E>(id: Snowflake, db: E) -> bool
         .fetch_optional(db)
         .await
         .map_err(|err| println!("error fetching exists user: {:?}", err))
-        .unwrap_or(None)
+        .unwrap()
         .is_some()
 }
 

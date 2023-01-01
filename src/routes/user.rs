@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use either::{Either, Left, Right};
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
@@ -71,6 +73,27 @@ async fn get_user(id: Snowflake, mut db: Connection<Db>) -> CacheControl<RawStat
     CacheControl(data)
 }
 
+#[post("/bulk", data = "<ids>", format = "application/json")]
+async fn get_users_bulk(ids: Json<Vec<ApiSnowflake>>, mut db: Connection<Db>) -> Json<HashMap<ApiSnowflake, Option<GetUserData>>> {
+    let ids = &ids.0.iter().map(|i| i.0).collect();
+    let users = logic::user::fetch_users(&ids, &mut *db).await;
+    let mapped = HashMap::from_iter(ids.iter().map(|id| {
+        let user = users.iter()
+            .position(|u| u.id == *id)
+            .and_then(|index| users.get(index))
+            .map(|user| {
+                GetUserData {
+                    id: ApiSnowflake(user.id),
+                    timezone: logic::user::calculate_tz_offset(&user.timezone),
+                    timezone_id: user.timezone.clone(),
+                }
+            });
+        (ApiSnowflake(*id), user)
+    }));
+
+    return Json(mapped);
+}
+
 #[get("/<id>/exists")]
 async fn exists_user(id: Snowflake, mut db: Connection<Db>) -> Status {
     let exists = logic::user::exists_user(id, &mut *db);
@@ -90,6 +113,7 @@ pub fn routes() -> AdHoc {
                 delete_user,
                 update_user,
                 get_user,
+                get_users_bulk,
                 exists_user,
             ],
         )

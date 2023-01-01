@@ -1,4 +1,5 @@
 use core::fmt;
+use std::hash::{Hash, Hasher};
 use std::ops::Deref;
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
@@ -17,6 +18,24 @@ impl Deref for ApiSnowflake {
         &self.0
     }
 }
+
+impl Hash for ApiSnowflake {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.0.hash(state);
+    }
+
+    fn hash_slice<H: Hasher>(data: &[Self], state: &mut H) where Self: Sized {
+        data.hash(state);
+    }
+}
+
+impl PartialEq<Self> for ApiSnowflake {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
+impl Eq for ApiSnowflake {}
 
 impl Serialize for ApiSnowflake {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
