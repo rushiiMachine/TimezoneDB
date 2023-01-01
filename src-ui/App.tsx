@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useIsLoggedIn} from "./utils/api";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -11,13 +11,22 @@ import {LogoutButton} from "./components/LogoutButton";
 function App() {
     const loggedInQuery = useIsLoggedIn()
 
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const clientMod = params.get("client_mod");
+
+        if (clientMod) {
+            localStorage.setItem("client_mod", clientMod);
+        }
+    }, []);
+
     return (
         <div className="app bg-not-black text-white overflow-scroll">
             <div className="min-h-screen flex flex-col justify-center">
                 <div className="inline-flex max-w-fit self-center mb-4">
                     <img src={icon} width={80} alt="TimezoneDB icon"/>
                     <a className="text-6xl font-bold mt-2 ml-2 mr-3 hover:underline"
-                       href="https://github.com/DiamondMiner88/TimezoneDB">TimezoneDB</a>
+                       href="https://github.com/rushiiMachine/TimezoneDB">TimezoneDB</a>
                     {loggedInQuery.data && <div className="self-center"><LogoutButton/></div>}
                 </div>
 

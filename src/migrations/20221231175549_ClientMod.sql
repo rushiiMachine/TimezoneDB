@@ -1,0 +1,1 @@
+ALTER TABLE tz_users ADD COLUMN client_mod VARCHAR(50) NULL;

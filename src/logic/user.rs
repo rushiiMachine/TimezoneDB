@@ -1,8 +1,9 @@
 use chrono::{FixedOffset, Offset, Utc};
 use chrono_tz::Tz;
 use rocket::serde::{Deserialize, Serialize};
-use rocket_db_pools::sqlx::{Executor, query, query_as, Postgres};
+use rocket_db_pools::sqlx::{Executor, Postgres, query, query_as};
 
+use crate::utils::deserialize_missing;
 use crate::utils::jwt::JwtData;
 use crate::utils::snowflake::Snowflake;
 
@@ -10,11 +11,15 @@ use crate::utils::snowflake::Snowflake;
 pub struct DbUser {
     pub id: i64,
     pub timezone: Option<String>,
+    pub client_mod: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserUpdateData {
-    pub timezone: Option<String>,
+    #[serde(default, deserialize_with = "deserialize_missing")]
+    pub timezone: Option<Option<String>>,
+    #[serde(default, deserialize_with = "deserialize_missing", rename = "clientMod")]
+    pub client_mod: Option<Option<String>>,
 }
 
 pub async fn add_user<'c, E>(user: &JwtData, db: E) -> bool
@@ -66,15 +71,29 @@ pub async fn delete_user<'c, E>(id: Snowflake, db: E) -> bool
         .is_ok()
 }
 
-pub async fn update_user<'c, E>(user: &JwtData, data: UserUpdateData, db: E) -> bool
+pub async fn update_user<'c, E>(user: &JwtData, data: &UserUpdateData, db: E) -> bool
     where
         E: Executor<'c, Database=Postgres>
 {
-    query("INSERT INTO tz_users (id, timezone) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET timezone = $2;")
-        .bind(*user.user_id)
-        .bind(data.timezone)
-        .execute(db)
-        .await
+    // yes this is ugly but im too lazy to think of something better
+    let query = if data.timezone.is_some() && data.client_mod.is_some() {
+        query("INSERT INTO tz_users (id, timezone, client_mod) VALUES ($1, $2, $3) ON CONFLICT (id) DO UPDATE SET timezone = $2, client_mod = $3;")
+            .bind(*user.user_id)
+            .bind(data.timezone.as_ref().unwrap())
+            .bind(data.client_mod.as_ref().unwrap())
+    } else if data.timezone.is_some() {
+        query("INSERT INTO tz_users (id, timezone) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET timezone = $2;")
+            .bind(*user.user_id)
+            .bind(data.timezone.as_ref().unwrap())
+    } else if data.client_mod.is_some() {
+        query("INSERT INTO tz_users (id, client_mod) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET client_mod = $3;")
+            .bind(*user.user_id)
+            .bind(data.client_mod.as_ref().unwrap())
+    } else {
+        return true;
+    };
+
+    query.execute(db).await
         .map_err(|err| println!("error updating user: {:?}", err))
         .is_ok()
 }

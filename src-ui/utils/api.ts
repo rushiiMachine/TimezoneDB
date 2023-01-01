@@ -51,11 +51,17 @@ function useCurrentUser(): UseQueryResult<User | null> {
     )
 }
 
-function updateCurrentUser(data: { timezone: string | null | undefined }): Promise<Response> {
+function updateCurrentUser(data: { timezone: string | null }): Promise<Response> {
+    const clientMod = localStorage.getItem("client_mod");
+    const body = {
+        ...data,
+        ...(clientMod && { clientMod } ),
+    }
+
     return fetch(
         `${API_URL}/user`,
         {
-            body: JSON.stringify(data),
+            body: JSON.stringify(body),
             method: 'PUT',
             headers: {'Content-Type': "application/json"}
         }

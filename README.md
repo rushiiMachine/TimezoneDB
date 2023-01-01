@@ -2,6 +2,13 @@
 
 A rewrite for the backend of the BetterDiscord/Aliucord's Timezones plugins.
 
+### Note for Plugin Developers
+
+When linking to the host website, please use `<HOST>/?client_mod=<YOUR_MOD_NAME>` instead of just the base URL. This is
+for internal analytics. When calling the API directly, please provide a detailed User-Agent header that describes where
+the request is from, for example `Vencord/1.0.0`. Adding on to this, if you are setting the user's public timezone
+manually, please do provide the `clientMod` field as well.
+
 # Setup
 
 Before you build, create a new Discord application in the [portal](https://discord.com/developers/applications).
@@ -41,9 +48,10 @@ bundled with the executable and served using rocket.
 2. Install pnpm & rust toolchain & perl (for openssl-sys)
 3. Pull dependencies: `pnpm install`
 4. Launch postgres: `docker run --name test-postgres -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres`
-6. Run backend: `DISCORD_ID=<id>;DISCORD_SECRET=<secret>;POSTGRES_URL="postgres://postgres:password@localhost:5432/postgres" cargo run`
-5. Run frontend: `pnpm start` 
-7. App: `http://localhost:3000`
+5. Run
+   backend: `DISCORD_ID=<id>;DISCORD_SECRET=<secret>;POSTGRES_URL="postgres://postgres:password@localhost:5432/postgres" cargo run`
+6. Run frontend: `pnpm start`
+7. App is accessible here: `http://localhost:3000`
 
 ## API
 Authentication is done through a JWT token in the `loginInfo` cookie that is sent with every request.
@@ -76,16 +84,20 @@ Gets the data from the DB and returns json. Returns 404 if no user with that id 
 | timezone   | string | The calculated UTC offset of the timezone. Ex. `+5`, `-5` `+5:30` |
 
 ### GET `/api/user/<id>/exists`
+
 Checks whether a user is stored in the DB. Returns 200/404 status code.
 
 ### DELETE `/api/user` (auth required)
+
 Deletes the current user from the db completely.
 
 ### PUT `/api/user` (auth required)
-Updates the current user's data.
+
+Updates the current user's data. Missing field = no update.
 
 Body:
 
-| Field    | Type    | Description                |
-|----------|---------|----------------------------|
-| timezone | string? | A new valid timezone name. |
+| Field      | Type    | Description                                  |
+|------------|---------|----------------------------------------------|
+| timezone?  | string? | A new valid timezone name.                   |
+| clientMod? | string? | The client mod that this user uses (if any). |

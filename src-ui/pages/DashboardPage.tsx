@@ -37,7 +37,7 @@ function DashboardPage() {
                 autoFocus={true}
                 isClearable={true}
                 options={timezoneOptions}
-                onChange={(tz) => updateMutation.mutate({timezone: tz?.value})}
+                onChange={(tz) => updateMutation.mutate({timezone: tz?.value ?? null})}
                 className="min-w-[15rem] text-black mr-3"
             />}
             {status !== null && <StatusIndicator status={status}/>}
