@@ -27,6 +27,7 @@ include_dir = "0.7"
 lazy_static = "1.4"
 thiserror = "1.0"
 either = "1.7"
+kankyo = "0.3"
 
 # Explicit dependency to compile openssl from openssl-src instead as a workaround for cross-compilation
 openssl = { version = "0.10", features = ["vendored"] }

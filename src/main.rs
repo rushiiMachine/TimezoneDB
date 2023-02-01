@@ -13,6 +13,9 @@ mod database;
 
 #[launch]
 fn rocket() -> Rocket<Build> {
+    if let Err(e) = kankyo::init() {
+        println!("{e}");
+    };
     let figment = Config::figment()
         .merge(("port", *constants::PORT))
         .merge(("databases.main.url", &*constants::POSTGRES_URL))
