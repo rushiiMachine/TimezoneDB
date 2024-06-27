@@ -19,7 +19,7 @@ pub async fn login_user(oauth_code: String, mut db: Connection<Db>) -> Result<St
         user_id: user.id,
     };
 
-    logic::user::add_user(&jwt_data, &mut *db).await;
+    logic::user::add_user(&jwt_data, &mut **db).await;
 
     let token = utils::jwt::make_token(jwt_data);
     Ok(token)

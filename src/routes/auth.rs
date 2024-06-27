@@ -26,12 +26,12 @@ async fn auth_denied() -> Redirect {
 async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Either<Redirect, Status> {
     match logic::auth::login_user(code, db).await {
         Ok(jwt_token) => {
-            let cookie = Cookie::build("loginInfo", jwt_token)
+            let cookie = Cookie::build(("loginInfo", jwt_token))
                 .secure(true)
                 .http_only(true)
                 .same_site(SameSite::Lax)
                 .expires(OffsetDateTime::now_utc() + Duration::days(30))
-                .finish();
+                .build();
 
             cookies.add(cookie);
         }
@@ -50,7 +50,7 @@ async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Eith
 
 #[get("/logout")]
 async fn logout(cookies: &CookieJar<'_>) -> Redirect {
-    cookies.remove(Cookie::named("loginInfo"));
+    cookies.remove(Cookie::from("loginInfo"));
     Redirect::to("/")
 }
 

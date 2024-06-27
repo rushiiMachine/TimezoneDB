@@ -25,7 +25,7 @@ async fn get_current_user(user: JwtData) -> Redirect {
 
 #[delete("/")]
 async fn delete_user(user: JwtData, mut db: Connection<Db>) -> Status {
-    let status = logic::user::delete_user(*user.user_id, &mut *db);
+    let status = logic::user::delete_user(*user.user_id, &mut **db);
 
     match status.await {
         true => Status::Ok,
@@ -35,7 +35,7 @@ async fn delete_user(user: JwtData, mut db: Connection<Db>) -> Status {
 
 #[put("/", data = "<data>", format = "application/json")]
 async fn update_user(user: JwtData, data: Json<UserUpdateData>, mut db: Connection<Db>) -> Status {
-    let update_status = logic::user::update_user(&user, &data.0, &mut *db).await;
+    let update_status = logic::user::update_user(&user, &data.0, &mut **db).await;
 
     match update_status {
         true => Status::Ok,
@@ -54,7 +54,7 @@ struct GetUserData {
 
 #[get("/<id>")]
 async fn get_user(id: Snowflake, mut db: Connection<Db>) -> CacheControl<RawStatus<Either<Json<GetUserData>, Json<ApiError>>>> {
-    let user = logic::user::fetch_user(id, &mut *db);
+    let user = logic::user::fetch_user(id, &mut **db);
 
     let data = match user.await {
         None =>
@@ -76,7 +76,7 @@ async fn get_user(id: Snowflake, mut db: Connection<Db>) -> CacheControl<RawStat
 #[post("/bulk", data = "<ids>", format = "application/json")]
 async fn get_users_bulk(ids: Json<Vec<ApiSnowflake>>, mut db: Connection<Db>) -> Json<HashMap<ApiSnowflake, Option<GetUserData>>> {
     let ids = &ids.0.iter().map(|i| i.0).collect();
-    let users = logic::user::fetch_users(&ids, &mut *db).await;
+    let users = logic::user::fetch_users(&ids, &mut **db).await;
     let mapped = HashMap::from_iter(ids.iter().map(|id| {
         let user = users.iter()
             .position(|u| u.id == *id)
@@ -96,7 +96,7 @@ async fn get_users_bulk(ids: Json<Vec<ApiSnowflake>>, mut db: Connection<Db>) ->
 
 #[get("/<id>/exists")]
 async fn exists_user(id: Snowflake, mut db: Connection<Db>) -> Status {
-    let exists = logic::user::exists_user(id, &mut *db);
+    let exists = logic::user::exists_user(id, &mut **db);
 
     match exists.await {
         true => Status::Ok,

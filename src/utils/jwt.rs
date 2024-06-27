@@ -30,11 +30,11 @@ impl<'r> FromRequest<'r> for JwtData {
                     Ok(data) =>
                         Outcome::Success(data),
                     Err(_) =>
-                        Outcome::Failure((Status::Unauthorized, JwtDataError::Invalid)),
+                        Outcome::Error((Status::Unauthorized, JwtDataError::Invalid)),
                 }
             }
             None =>
-                Outcome::Failure((Status::Unauthorized, JwtDataError::Missing))
+                Outcome::Error((Status::Unauthorized, JwtDataError::Missing))
         }
     }
 }
