@@ -8,6 +8,7 @@ use rocket_db_pools::Connection;
 
 use crate::{constants, logic};
 use crate::database::Db;
+use crate::utils::discord::{DiscordApiError, DiscordApiErrorData};
 
 #[get("/")]
 async fn redirect() -> Redirect {
@@ -26,26 +27,28 @@ async fn auth_denied() -> Redirect {
 async fn code(code: String, cookies: &CookieJar<'_>, db: Connection<Db>) -> Either<Redirect, Status> {
     match logic::auth::login_user(code, db).await {
         Ok(jwt_token) => {
-            let cookie = Cookie::build(("loginInfo", jwt_token))
+            cookies.add(Cookie::build(("loginInfo", jwt_token))
                 .secure(true)
                 .http_only(true)
                 .same_site(SameSite::Lax)
-                .expires(OffsetDateTime::now_utc() + Duration::days(30))
-                .build();
+                .expires(OffsetDateTime::now_utc() + Duration::days(30)));
 
-            cookies.add(cookie);
+            let host = Uri::parse::<Reference>(&*constants::HOST)
+                .expect("invalid HOST env var");
+            Left(Redirect::to(host))
         }
         Err(err) => {
-            // TODO: return InvalidRequest if invalid code
+            match err.downcast_ref::<DiscordApiError>() {
+                Some(DiscordApiError::ApiError(DiscordApiErrorData { error, .. })) if error == "invalid_grant" => {
+                    return Right(Status::BadRequest);
+                }
+                _ => {}
+            };
 
             println!("failed to auth user {:?}", err);
-            return Right(Status::InternalServerError);
+            Right(Status::InternalServerError)
         }
     }
-
-    let host = Uri::parse::<Reference>(&*constants::HOST)
-        .expect("invalid HOST env var");
-    Left(Redirect::to(host))
 }
 
 #[get("/logout")]
