@@ -27,6 +27,7 @@ include_dir = "0.7"
 lazy_static = "1.4"
 thiserror = "1.0"
 either = "1.7"
+kankyo = "0.3"
 
 # Override transitive dependency on openssl to compile from src targeting MUSL instead
 # perl is needed on the PATH in order to compile

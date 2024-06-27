@@ -17,6 +17,8 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 
 ### Environment variables
 
+Can be modified in the [.env](./.env.example) file.
+
 | PORT             | TYPE   | Default                                              | Description                                                                  | 
 |------------------|--------|------------------------------------------------------|------------------------------------------------------------------------------|
 | `PORT`           | u16    | 8000 (unmodifiable in debug)                         | The port to serve the app on                                                 |
@@ -33,7 +35,10 @@ variable below. Copy the secret and id from the OAuth tab to set as environment 
 $ pnpm install
 $ pnpm build
 $ cargo build --release
+# Set environment variables manually
 $ export PORT=<port>;DISCORD_ID=<id>;DISCORD_SECRET=<secret>;HOST=<host>;JWT_SECRET=<key>POSTGRES_URL=<connection_string>;
+# or using .env
+$ mv .env.example .env
 $ ./target/release/timezone_db
 ```
 
